@@ -8,10 +8,10 @@ import numpy as np
 
 
 class Encoder(nn.Module):
-  def __init__(input_dim, embed_dim, hidden_dim, num_layers, dropout):
+  def __init__(input_dim, embed_dim, hidden_dim, num_layers,bidirectional ,dropout):
     super().__init__()
     self.embd = nn.Embedding(input_dim,embed_dim)
-    self.rnn = nn.LSTM(embed_dim, hidden_dim, num_layers,bidirectional = True)
+    self.rnn = nn.LSTM(embed_dim, hidden_dim, num_layers,bidirectional = bidirectional)
     self.dropout = nn.Dropout(dropout)
 
   #using dropout to prevent overfitting
@@ -89,5 +89,6 @@ class Attention(nn.Module):
       scores = torch.sum(self.v * transformed, dim=2)  # [seq_len, batch_size]
 
       return scores 
+
 
       
