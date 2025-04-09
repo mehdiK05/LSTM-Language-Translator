@@ -33,7 +33,7 @@ class Encoder(nn.Module):
 
 class Attention(nn.Module):
     def __init__(self, hidden_dim, method):
-        super(Attention, self).__init__()
+        super().__init__()
         self.method = method
         self.hidden_dim = hidden_dim
 
@@ -112,7 +112,7 @@ class Decoder(nn.Module):
     """
     def __init__(self, vsz, embed_dim, hidden_dim, n_layers, use_birnn, 
                  dout, attn, tied):
-        super(DecRNN, self).__init__()
+        super().__init__()
         
         self.hidden_dim = hidden_dim*2 if use_birnn else hidden_dim
         
