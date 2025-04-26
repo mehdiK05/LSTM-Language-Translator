@@ -83,7 +83,7 @@ def pad_collate(batch):
     return src, tgt
 
 # Function to prepare data
-def prepare_data(df, darija_vocab, english_vocab, test_size=0.1):
+def prepare_data(df,test_size=0.1):
     
     train_df, test_df = train_test_split(df, test_size=test_size, random_state=42)
     train_df, val_df = train_test_split(train_df, test_size=test_size, random_state=42)
