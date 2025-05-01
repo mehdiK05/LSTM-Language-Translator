@@ -34,6 +34,7 @@ class Vocab:
     
     def tokenize(self, text):
         # Convertir en chaîne de caractères si ce n'est pas déjà le cas
+        
         if not isinstance(text, str):
             text = str(text)
         text = text.lower()
