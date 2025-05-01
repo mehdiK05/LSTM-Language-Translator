@@ -98,7 +98,7 @@ def translate_sentence(model, sentence, src_field, tgt_field, device, max_length
         encoder_outputs, hidden = model.encoder(src_tensor)
         
     # First input to the decoder is the <sos> token
-    tgt_idx = [tgt_field.vocab.stoi["<sos>"]]
+    tgt_idx = [tgt_field.stoi["<sos>"]]
     
     # Generate translation token by token
     for _ in range(max_length):
@@ -110,13 +110,13 @@ def translate_sentence(model, sentence, src_field, tgt_field, device, max_length
             
         pred_token = output.argmax(1).item()
         
-        if pred_token == tgt_field.vocab.stoi["<eos>"]:
+        if pred_token == tgt_field.stoi["<eos>"]:
             break
             
         tgt_idx.append(pred_token)  
         
     # Convert indices to words (remove <sos> token at the beginning)
-    tgt_tokens = [tgt_field.vocab.itos[i] for i in tgt_idx[1:]]
+    tgt_tokens = [tgt_field.itos[i] for i in tgt_idx[1:]]
     
     return tgt_tokens
 
@@ -137,10 +137,10 @@ def calculate_bleu(model, test_loader, src_field, tgt_field, device):
                 tgt_sentence = tgt[:, i]  # Get i-th target in batch
                 
                 # Get reference and remove special tokens
-                reference = [tgt_field.vocab.itos[token.item()] for token in tgt_sentence 
-                            if token.item() != tgt_field.vocab.stoi["<sos>"] and 
-                               token.item() != tgt_field.vocab.stoi["<eos>"] and
-                               token.item() != tgt_field.vocab.stoi["<pad>"]]
+                reference = [tgt_field.itos[token.item()] for token in tgt_sentence 
+                            if token.item() != tgt_field.stoi["<sos>"] and 
+                               token.item() != tgt_field.stoi["<eos>"] and
+                               token.item() != tgt_field.stoi["<pad>"]]
                 
                 # Get predicted translation
                 translation = translate_sentence(model, src_sentence, src_field, tgt_field, device)
@@ -217,7 +217,7 @@ def main():
     # Initialize optimizer (Adam) and loss function (CrossEntropyLoss)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
     
-    criterion = nn.CrossEntropyLoss(ignore_index=darija_field.vocab.stoi["<pad>"])
+    criterion = nn.CrossEntropyLoss(ignore_index=darija_field.stoi["<pad>"])
     
     # Training loop variables
     best_valid_loss = float('inf')  # Initialize with infinity to always save first model
