@@ -195,8 +195,8 @@ class Seq2SeqModel(nn.Module):
          # Unpack the field objects for source and target languages
         self.source_field, self.target_field = fields
         
-        self.source_vocab_size = len(self.source_field[1].vocab.itos)
-        self.target_vocab_size = len(self.target_field[1].vocab.itos)
+        self.source_vocab_size = len(self.source_field[1].itos)
+        self.target_vocab_size = len(self.target_field[1].itos)
         
         # Store model configuration for later use
         self.device = device
