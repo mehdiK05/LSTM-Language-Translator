@@ -83,17 +83,20 @@ def pad_collate(batch):
     return src, tgt
 
 # Function to prepare data
-def prepare_data(df,test_size=0.1):
+def prepare_data(df, test_size=0.1):
     
     train_df, test_df = train_test_split(df, test_size=test_size, random_state=42)
     train_df, val_df = train_test_split(train_df, test_size=test_size, random_state=42)
     
-    
+    # Initialize vocabularies
     darija_vocab = Vocab(freq_threshold=2)
     darija_vocab.build_vocabulary(train_df["darija"].tolist())
     
     english_vocab = Vocab(freq_threshold=2)
     english_vocab.build_vocabulary(train_df["english"].tolist())
+    
+    # Create field tuples compatible with train.py
+    fields = [(None, darija_vocab), (None, english_vocab)]
     
     train_dataset = TranslationDataset(
         train_df["darija"].tolist(),
@@ -116,7 +119,7 @@ def prepare_data(df,test_size=0.1):
         english_vocab
     )
     
-    return train_dataset, val_dataset, test_dataset, darija_vocab, english_vocab
+    return train_dataset, val_dataset, test_dataset, fields
 
 # Function to create DataLoaders
 def get_data_loaders(train_dataset, val_dataset, test_dataset, batch_size=32):
@@ -142,4 +145,3 @@ def get_data_loaders(train_dataset, val_dataset, test_dataset, batch_size=32):
     )
     
     return train_loader, val_loader, test_loader
-
