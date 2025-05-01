@@ -33,6 +33,9 @@ class Vocab:
                 idx += 1
     
     def tokenize(self, text):
+        # Convertir en chaîne de caractères si ce n'est pas déjà le cas
+        if not isinstance(text, str):
+            text = str(text)
         text = text.lower()
         text = re.sub(r'[^\w\s]', '', text)
         return text.split()
@@ -87,6 +90,12 @@ def prepare_data(df, test_size=0.1):
     
     train_df, test_df = train_test_split(df, test_size=test_size, random_state=42)
     train_df, val_df = train_test_split(train_df, test_size=test_size, random_state=42)
+    
+    # Make sure data is string type
+    for col in ['darija', 'english']:
+        train_df[col] = train_df[col].astype(str)
+        val_df[col] = val_df[col].astype(str)
+        test_df[col] = test_df[col].astype(str)
     
     # Initialize vocabularies
     darija_vocab = Vocab(freq_threshold=2)
