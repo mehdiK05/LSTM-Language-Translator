@@ -17,11 +17,11 @@ import math
 
 
 class Encoder(nn.Module):
-  def __init__(self,vocabsize_src, embed_dim, hidden_dim, num_layers,bidirectional ,dropout):
+  def __init__(self, vocabsize_src, embed_dim, hidden_dim, n_layers, use_birnn, dout):
     super().__init__()
-    self.embd = nn.Embedding(vocabsize_src,embed_dim)
-    self.rnn = nn.LSTM(embed_dim, hidden_dim, num_layers,bidirectional = bidirectional)
-    self.dropout = nn.Dropout(dropout)
+    self.embd = nn.Embedding(vocabsize_src, embed_dim)
+    self.rnn = nn.LSTM(embed_dim, hidden_dim, n_layers, bidirectional=use_birnn)
+    self.dropout = nn.Dropout(dout)
 
   #using dropout to prevent overfitting
   def forward(self, x):
@@ -83,7 +83,7 @@ class Attention(nn.Module):
 
       #Expand dec_out to match encodr outpts
       dec_out_new = dec_out.unsqueeze(0)  # [1, batch_size, hidden_dim]
-      dec_out_expanded = dec_out_expanded.expand_as(enc_outs)  # [seq_len, batch_size, hidden_dim]
+      dec_out_expanded = dec_out_new.expand_as(enc_outs)  # [seq_len, batch_size, hidden_dim]
 
       
       combined = torch.cat([dec_out_expanded, enc_outs], dim=2)  # [seq_len, batch_size, hidden_dim*2]
@@ -206,7 +206,7 @@ class Seq2SeqModel(nn.Module):
         
        
         self.encoder = Encoder(
-            vocabsize_tgt=self.source_vocab_size,        
+            vocabsize_src=self.source_vocab_size,        
             embed_dim=args.embed_dim,          
             hidden_dim=args.hidden_dim,        
             n_layers=args.n_layers,           
@@ -251,7 +251,7 @@ class Seq2SeqModel(nn.Module):
         encoder_outputs, hidden = self.encoder(source_seq)
         
         
-        decoder_input = torch.ones_like(source_seq[0]) * 2  # <eos> token at id 2
+        decoder_input = torch.ones_like(source_seq[0]) * self.target_field[1].stoi["<sos>"]  # <sos> token
         
         # Container for storing decoder outputs at each step
         outputs = []
@@ -284,4 +284,3 @@ class Seq2SeqModel(nn.Module):
         
         # Stack all decoder outputs
         return torch.stack(outputs)
-    
